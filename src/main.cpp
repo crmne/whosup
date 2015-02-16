@@ -20,7 +20,7 @@ int main(int argc, char *const *argv) {
     bool quiet = false;
     int threads = 48;
     int retries = 2;
-    double timeout = 0.1;
+    double timeout = 1.0;
 
     int c;
     extern char *optarg;
