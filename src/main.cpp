@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <crafter.h>
-#include <crafter/utils/IPResolver.h>
+#include <crafter/Utils/IPResolver.h>
 
 using namespace std;
 using namespace Crafter;
