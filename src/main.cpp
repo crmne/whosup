@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <iomanip>
 #include <string>
 #include <unistd.h>
@@ -9,6 +10,8 @@
 using namespace std;
 using namespace Crafter;
 
+unsigned long max_threads = 254;  // TODO: more elegantly, we should query for the max number of BPF devices we can use
+
 void usage() {
     cout << "Usage: whosup -i interface -a addresses [-q] [-t threads] [-r retries] [-w timeout]" << endl;
     exit(1);
@@ -18,7 +21,7 @@ int main(int argc, char *const *argv) {
 
     string iface, addresses;
     bool quiet = false;
-    int threads = 48;
+    int threads = 0;
     int retries = 2;
     double timeout = 1.0;
 
@@ -78,6 +81,10 @@ int main(int argc, char *const *argv) {
     }
 
     vector<Packet*> replies_packets(request_packets.size());
+    if (threads == 0) {
+        threads = min(net.size(), max_threads);
+    }
+    cout << "threads: " << threads << endl;
     SendRecv(request_packets.begin(), request_packets.end(), replies_packets.begin(), iface, timeout, retries, threads);
 
     vector<Packet*>::iterator it_pck;
