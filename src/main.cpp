@@ -84,7 +84,6 @@ int main(int argc, char *const *argv) {
     if (threads == 0) {
         threads = min(net.size(), max_threads);
     }
-    cout << "threads: " << threads << endl;
     SendRecv(request_packets.begin(), request_packets.end(), replies_packets.begin(), iface, timeout, retries, threads);
 
     vector<Packet*>::iterator it_pck;
