@@ -82,7 +82,7 @@ int main(int argc, char *const *argv) {
 
     vector<Packet*> replies_packets(request_packets.size());
     if (threads == 0) {
-        threads = min(net.size(), max_threads);
+        threads = min((unsigned long) net.size(), max_threads);
     }
     SendRecv(request_packets.begin(), request_packets.end(), replies_packets.begin(), iface, timeout, retries, threads);
 
