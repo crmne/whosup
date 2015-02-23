@@ -6,21 +6,23 @@
 #include <stdlib.h>
 #include <crafter.h>
 #include <crafter/Utils/IPResolver.h>
+#include "ARPTableReader.h"
 
 using namespace std;
 using namespace Crafter;
 
-unsigned long max_threads = 254;  // TODO: more elegantly, we should query for the max number of BPF devices we can use
+unsigned long max_threads = 48;  // TODO: more elegantly, we should query for the max number of BPF devices we can use
 
 void usage() {
-    cout << "Usage: whosup -i interface -a addresses [-q] [-t threads] [-r retries] [-w timeout]" << endl;
+    cout << "Usage: whosup -i interface [-a addresses] [-q] [-p arp_file] [-t threads] [-r retries] [-w timeout]" << endl;
     exit(1);
 }
 
 int main(int argc, char *const *argv) {
 
-    string iface, addresses;
+    string iface, addresses, arp_file;
     bool quiet = false;
+    bool read_arp = false;
     int threads = 0;
     int retries = 2;
     double timeout = 1.0;
@@ -28,8 +30,8 @@ int main(int argc, char *const *argv) {
     int c;
     extern char *optarg;
     extern int optind, optopt;
-    if (argc < 5) usage();
-    while((c =  getopt(argc, argv, ":i:a:qt:r:w:")) != EOF) {
+    if (argc < 3) usage();
+    while((c =  getopt(argc, argv, ":i:a:qp:t:r:w:")) != EOF) {
         switch (c) {
         case 'i':
             iface = optarg;
@@ -39,6 +41,10 @@ int main(int argc, char *const *argv) {
             break;
         case 'q':
             quiet = true;
+            break;
+        case 'p':
+            read_arp = true;
+            arp_file = optarg;
             break;
         case 't':
             threads = atoi(optarg);
@@ -69,10 +75,16 @@ int main(int argc, char *const *argv) {
     arp_header.SetSenderIP(MyIP);
     arp_header.SetSenderMAC(MyMAC);
 
-    vector<string> net = GetIPs(addresses);
+    vector<string> net;
+    if (read_arp) {
+        ARPTableReader atr = ARPTableReader(iface, arp_file);
+        net = atr.ips;
+    } else {
+        net = GetIPs(addresses);
+    }
     vector<string>::iterator ip_addr;
     vector<Packet*> request_packets;
-    for(ip_addr = net.begin() ; ip_addr != net.end() ; ip_addr++) {
+    for(ip_addr = net.begin(); ip_addr != net.end(); ip_addr++) {
         arp_header.SetTargetIP(*ip_addr);
         Packet* packet = new Packet;
         packet->PushLayer(ether_header);
