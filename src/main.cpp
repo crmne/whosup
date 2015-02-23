@@ -14,7 +14,7 @@ using namespace Crafter;
 unsigned long max_threads = 48;  // TODO: more elegantly, we should query for the max number of BPF devices we can use
 
 void usage() {
-    cout << "Usage: whosup -i interface [-a addresses] [-q] [-p arp_file] [-t threads] [-r retries] [-w timeout]" << endl;
+    cout << "Usage: whosup -i interface [-a addresses] [-q] [-f arp_file] [-t threads] [-r retries] [-w timeout]" << endl;
     exit(1);
 }
 
@@ -31,7 +31,7 @@ int main(int argc, char *const *argv) {
     extern char *optarg;
     extern int optind, optopt;
     if (argc < 3) usage();
-    while((c =  getopt(argc, argv, ":i:a:qp:t:r:w:")) != EOF) {
+    while((c =  getopt(argc, argv, ":i:a:qf:t:r:w:")) != EOF) {
         switch (c) {
         case 'i':
             iface = optarg;
@@ -42,7 +42,7 @@ int main(int argc, char *const *argv) {
         case 'q':
             quiet = true;
             break;
-        case 'p':
+        case 'f':
             read_arp = true;
             arp_file = optarg;
             break;
