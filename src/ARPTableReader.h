@@ -3,12 +3,10 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
 class ARPTableReader
 {
-	string path;
+	std::string path;
 public:
-	vector<string> ips;
-	ARPTableReader(string iface, string p="/proc/net/arp");
+	std::vector<std::string> ips;
+	ARPTableReader(std::string iface, std::string p="/proc/net/arp");
 };

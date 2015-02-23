@@ -1,15 +1,15 @@
 #include "ARPTableReader.h"
 
-ARPTableReader::ARPTableReader(string iface, string p) {
+ARPTableReader::ARPTableReader(std::string iface, std::string p) {
     path = p;
 
-    string line;
-    ifstream arp_table(path.c_str());
-    getline(arp_table, line); // ignore first line
+    std::string line;
+    std::ifstream arp_table(path.c_str());
+    std::getline(arp_table, line); // ignore first line
     if (arp_table.is_open()) {
         while (getline(arp_table, line)) {
-            istringstream ss(line);
-            string ip, dummy, interface;
+            std::stringstream ss(line);
+            std::string ip, dummy, interface;
             ss >> ip >> dummy >> dummy >> dummy >> dummy >> interface;
             if (iface.compare(interface) == 0) {
                 ips.push_back(ip);

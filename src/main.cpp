@@ -8,19 +8,18 @@
 #include <crafter/Utils/IPResolver.h>
 #include "ARPTableReader.h"
 
-using namespace std;
 using namespace Crafter;
 
 unsigned long max_threads = 48;  // TODO: more elegantly, we should query for the max number of BPF devices we can use
 
 void usage() {
-    cout << "Usage: whosup -i interface [-a addresses] [-q] [-f arp_file] [-t threads] [-r retries] [-w timeout]" << endl;
+    std::cout << "Usage: whosup -i interface [-a addresses] [-q] [-f arp_file] [-t threads] [-r retries] [-w timeout]" << std::endl;
     exit(1);
 }
 
 int main(int argc, char *const *argv) {
 
-    string iface, addresses, arp_file;
+    std::string iface, addresses, arp_file;
     bool quiet = false;
     bool read_arp = false;
     int threads = 0;
@@ -56,16 +55,16 @@ int main(int argc, char *const *argv) {
             timeout = atof(optarg);
             break;
         case ':':
-            cerr << "Option -" << (char)optopt << " requires an operand" << endl;
+            std::cerr << "Option -" << (char)optopt << " requires an operand" << std::endl;
             usage();
         case '?':
-            cerr << "Unrecognised option: -" << (char)optopt << endl;
+            std::cerr << "Unrecognised option: -" << (char)optopt << std::endl;
             usage();
         }
     }
 
-    string MyIP = GetMyIP(iface);
-    string MyMAC = GetMyMAC(iface);
+    std::string MyIP = GetMyIP(iface);
+    std::string MyMAC = GetMyMAC(iface);
 
     Ethernet ether_header;
     ether_header.SetSourceMAC(MyMAC);
@@ -75,15 +74,15 @@ int main(int argc, char *const *argv) {
     arp_header.SetSenderIP(MyIP);
     arp_header.SetSenderMAC(MyMAC);
 
-    vector<string> net;
+    std::vector<std::string> net;
     if (read_arp) {
         ARPTableReader atr = ARPTableReader(iface, arp_file);
         net = atr.ips;
     } else {
         net = GetIPs(addresses);
     }
-    vector<string>::iterator ip_addr;
-    vector<Packet*> request_packets;
+    std::vector<std::string>::iterator ip_addr;
+    std::vector<Packet*> request_packets;
     for(ip_addr = net.begin(); ip_addr != net.end(); ip_addr++) {
         arp_header.SetTargetIP(*ip_addr);
         Packet* packet = new Packet;
@@ -92,15 +91,15 @@ int main(int argc, char *const *argv) {
         request_packets.push_back(packet);
     }
 
-    vector<Packet*> replies_packets(request_packets.size());
+    std::vector<Packet*> replies_packets(request_packets.size());
     if (threads == 0) {
-        threads = min((unsigned long) net.size(), max_threads);
+        threads = std::min((unsigned long) net.size(), max_threads);
     }
     SendRecv(request_packets.begin(), request_packets.end(), replies_packets.begin(), iface, timeout, retries, threads);
 
-    vector<Packet*>::iterator it_pck;
+    std::vector<Packet*>::iterator it_pck;
     if (!quiet) {
-        cout << setfill(' ') << setw(18) << left << "Host" << setw(42) << left << "Hostname" << setw(18) << left << "MAC Address" << endl;
+        std::cout << std::setfill(' ') << std::setw(18) << std::left << "Host" << std::setw(42) << std::left << "Hostname" << std::setw(18) << std::left << "MAC Address" << std::endl;
     }
     int counter = 0;
     for(it_pck = replies_packets.begin() ; it_pck < replies_packets.end() ; it_pck++) {
@@ -108,13 +107,13 @@ int main(int argc, char *const *argv) {
         if(reply_packet) {
             ARP* arp_layer = reply_packet->GetLayer<ARP>();
             if (! quiet) {
-                cout << setfill(' ') << setw(18) << left << arp_layer->GetSenderIP() << setw(42) << left << GetHostname(arp_layer->GetSenderIP()) << setw(18) << left << arp_layer->GetSenderMAC() << endl;
+                std::cout << std::setfill(' ') << std::setw(18) << std::left << arp_layer->GetSenderIP() << std::setw(42) << std::left << GetHostname(arp_layer->GetSenderIP()) << std::setw(18) << std::left << arp_layer->GetSenderMAC() << std::endl;
             }
             counter++;
         }
     }
 
-    cout << counter << " hosts up." << endl;
+    std::cout << counter << " hosts up." << std::endl;
 
     for(it_pck = request_packets.begin() ; it_pck < request_packets.end() ; it_pck++)
         delete (*it_pck);
