@@ -4,7 +4,7 @@ ARPTableReader::ARPTableReader(string iface, string p) {
     path = p;
 
     string line;
-    ifstream arp_table(path);
+    ifstream arp_table(path.c_str());
     getline(arp_table, line); // ignore first line
     if (arp_table.is_open()) {
         while (getline(arp_table, line)) {
