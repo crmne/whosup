@@ -8,11 +8,11 @@ ARPTableReader::ARPTableReader(std::string iface, std::string p) {
     std::getline(arp_table, line); // ignore first line
     if (arp_table.is_open()) {
         while (getline(arp_table, line)) {
-            char ip[17], interface[17], dummy[100];
-            sscanf(line.c_str(), "%s %s %s %s %s %s", ip, dummy, dummy, dummy, dummy, interface);
-            if (strcmp(iface.c_str(), interface) == 0) {
-                std::string s(ip);
-                ips.push_back(s);
+            std::stringstream ss(line);
+            std::string ip, dummy, interface;
+            ss >> ip >> dummy >> dummy >> dummy >> dummy >> interface;
+            if (iface.compare(interface) == 0) {
+                ips.push_back(ip);
             }
         }
         arp_table.close();
