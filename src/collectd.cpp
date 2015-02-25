@@ -111,7 +111,7 @@ int main(int argc, char *const *argv)
 
 	while (true) {
 		int n_connected = connected_hosts(iface, arp_file, threads, retries, timeout); 
-		std::cout << "PUTVAL " << hostname << "/exec-wholan/connected_hosts-" << hostname << " interval=" << interval << "N:" << n_connected << std::endl;
+		std::cout << "PUTVAL " << hostname << "/exec-wholan/connected_hosts-" << hostname << " interval=" << interval << " N:" << n_connected << std::endl;
 		usleep(interval * 1000000);
 	}
 	return 0;
