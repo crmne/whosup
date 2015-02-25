@@ -12,7 +12,6 @@ ARPTableReader::ARPTableReader(std::string iface, std::string p) {
     }
 
     while (std::getline(arp_table, line) && arp_table.good()) {
-        ;
         std::stringstream ss(line);
         std::string ip, dummy, interface;
         ss >> ip >> dummy >> dummy >> dummy >> dummy >> interface;

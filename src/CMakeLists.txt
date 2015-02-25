@@ -1,9 +1,11 @@
-FILE (GLOB_RECURSE project_SRCS *.cpp *.cxx *.cc *.C *.c *.h *.hpp)
+FILE (GLOB_RECURSE project_HEADERS *.h *.hpp)
 SET (project_LIBS ${LIBCRAFTER_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-SET (project_BIN ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${project_BIN} ${project_SRCS})
-TARGET_LINK_LIBRARIES(${project_BIN} ${project_LIBS})
-SET_TARGET_PROPERTIES(${project_BIN} PROPERTIES VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINOR}" OUTPUT_NAME ${project_BIN} CLEAN_DIRECT_OUTPUT 1)
+ADD_EXECUTABLE(whosup ${project_HEADERS} main.cpp ARPTableReader.cpp)
+TARGET_LINK_LIBRARIES(whosup ${project_LIBS})
 
-INSTALL(TARGETS ${project_BIN} DESTINATION bin)
+ADD_EXECUTABLE(whosup_collectd ${project_HEADERS} collectd.cpp ARPTableReader.cpp)
+TARGET_LINK_LIBRARIES(whosup_collectd ${project_LIBS})
+
+INSTALL(TARGETS whosup DESTINATION bin)
+INSTALL(TARGETS whosup_collectd DESTINATION bin)
