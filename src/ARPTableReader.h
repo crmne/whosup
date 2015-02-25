@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
 
 class ARPTableReader
 {

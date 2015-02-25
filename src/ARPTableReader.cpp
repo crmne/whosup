@@ -8,7 +8,7 @@ ARPTableReader::ARPTableReader(std::string iface, std::string p) {
     std::getline(arp_table, line); // ignore first line
     if (!arp_table.is_open()) {
         std::cerr << "Error while opening file." << std::endl;
-        exit(1);
+        abort();
     }
 
     while (std::getline(arp_table, line) && arp_table.good()) {
