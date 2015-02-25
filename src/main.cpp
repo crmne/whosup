@@ -1,6 +1,5 @@
 #include <iostream>
 #include <algorithm>
-#include <iomanip>
 #include <string>
 #include <unistd.h>
 #include <stdlib.h>
@@ -99,7 +98,7 @@ int main(int argc, char *const *argv) {
 
     std::vector<Packet*>::iterator it_pck;
     if (!quiet) {
-        std::cout << std::setfill(' ') << std::setw(18) << std::left << "Host" << std::setw(42) << std::left << "Hostname" << std::setw(18) << std::left << "MAC Address" << std::endl;
+        printf("%-18s%-42s%-18s\n", "Host", "Hostname", "MAC Address");
     }
     int counter = 0;
     for(it_pck = replies_packets.begin() ; it_pck < replies_packets.end() ; it_pck++) {
@@ -107,7 +106,11 @@ int main(int argc, char *const *argv) {
         if(reply_packet) {
             ARP* arp_layer = reply_packet->GetLayer<ARP>();
             if (! quiet) {
-                std::cout << std::setfill(' ') << std::setw(18) << std::left << arp_layer->GetSenderIP() << std::setw(42) << std::left << GetHostname(arp_layer->GetSenderIP()) << std::setw(18) << std::left << arp_layer->GetSenderMAC() << std::endl;
+                printf("%-18s%-42s%-18s\n",
+                    arp_layer->GetSenderIP().c_str(),
+                    GetHostname(arp_layer->GetSenderIP()).c_str(),
+                    arp_layer->GetSenderMAC().c_str()
+                );
             }
             counter++;
         }
